@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.2.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-4.2.xsd
+        ">
+     <!-- 
+     	1.集成数据源->数据连接池
+     	2.配置Session工厂类
+     	3.配置操作模板类
+     	4.事务管理
+     	5.事务传播方式
+      -->   
+     <bean id="dataSource" class="org.apache.tomcat.dbcp.dbcp.BasicDataSource">
+    	<property name="driverClassName" value="com.mysql.jdbc.Driver" /> <!-- 数据库驱动 -->
+    	<property name="url" value="jdbc:mysql://127.0.0.1:3306/InnerSystem" /> <!-- 连接URL -->
+    	<property name="username" value="root" /> <!-- 登录名 -->
+    	<property name="password" value="root" /> <!-- 登录密码 -->
+     </bean>
+     <!-- 创建Session工厂类 -->
+  	<bean id="sessionFactory"  class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+	    <property name="dataSource" ref="dataSource" />
+	    <!-- 配置Hibernate基础配置 -->
+	    <property name="hibernateProperties">
+	        <props>
+	         	<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLInnoDBDialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.format_sql">true</prop>
+	         </props>
+	         </property>
+	         
+	         <!-- 按照包名称扫描包下的所有类 -->
+	         <property name="packagesToScan">
+				<array>
+					<value>cn.baisee.entity</value>
+				</array>	         
+	         </property>
+	         
+	         <!-- 引入 hbm配置 ，默认扫描hbm文件-->
+<!-- 	         <property name="mappingDirectoryLocations"> -->
+<!-- 	         	<list> -->
+<!-- 	         	     <value>classpath:/cn/baisee/entity</value> -->
+<!-- 	         	</list> -->
+<!-- 	         </property> -->
+	         
+	         
+	         <!-- Hibernate操作模板类 -->
+    </bean>
+    <bean id="hibernateTemplate" class="org.springframework.orm.hibernate4.HibernateTemplate">
+	     <property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	 
+	
+	<!-- 配置事务管理 -->
+	<bean id="txManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+	      <property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<!-- 声明式  注解事务 服务层需要结合@Transactional -->
+	<tx:annotation-driven transaction-manager="txManager"/>
+</beans>
