@@ -7,6 +7,9 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
 import org.springframework.stereotype.Service;
 
 import cn.baisee.dao.IAuthorResourcesDao;
@@ -30,6 +33,8 @@ public class authorResourcesServiceImpl implements IAuthorResourcesService{
 	public PageVo toList(PageVo vo) {
 		if(vo !=null && vo.getPage()==null){
 			vo.setPage(1);
+		}else{
+			vo=new PageVo();
 		}
 		String hql="from AuthorResources where 1=1";
 		String hqlCount="select count(*) from AuthorResources where 1=1";
@@ -81,4 +86,64 @@ public class authorResourcesServiceImpl implements IAuthorResourcesService{
 	}
 
 	
+
+
+	
+	/**
+	 * 查询所有资源
+	 */
+	@Override
+	public String queryAll() {
+		JSONArray array=new JSONArray();
+		buildTree(null, array);
+		return array.toString();
+	}
+
+	/**
+	 * 构建树
+	 * @param 	parentId 当前节点的父节点ID
+	 * @param	array  构建JsonArray的对象，上一级的，用于存放进array
+	 */
+	public void buildTree(Integer parentId, JSONArray array) {
+		//声明子节点
+		List<AuthorResources> childs=null;
+		//查询是否为根节点
+		if(parentId==null){//根节点
+			childs=authorResourcesDao.queryAll("from AuthorResources where parentId is null");
+		}else{
+			childs=authorResourcesDao.queryAll("from AuthorResources where parentId=?",parentId);
+		}
+		for(AuthorResources child:childs){
+			//当前节点为child
+			//查询当前节点是否还有子节点
+			List<AuthorResources> cchilds=authorResourcesDao.queryAll("from AuthorResources where parentId =?", child.getId());
+			if(cchilds.size()>0){
+				JSONArray childArray=new JSONArray();
+				buildTree(child.getId(), childArray);
+				
+				JSONObject childObject=JSONObject.fromObject(child);
+				//相当于map.put存值，(key,value),把名为children的子节点childArray数组
+				//存放在上一级父节点childObject对象
+				childObject.element("children", childArray);
+				array.add(childObject);
+			}else{
+				//没有子节点
+				array.add(JSONObject.fromObject(child));
+			}
+		}
+	}
+	
+	/**
+	 * JSON格式化
+	 */
+//	public static void main(String[] args){
+//		
+//		//一个对象
+//		JSONObject object=JSONObject.fromObject(new AuthorResources());
+//		System.out.println(object.toString());
+//		//一个数组
+//		JSONArray array=new JSONArray();
+//		array.add(object);
+//		System.out.println(array.toString());
+//	}
 }

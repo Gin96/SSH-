@@ -2,6 +2,7 @@ package cn.baisee.service;
 
 import java.io.Serializable;
 
+import net.sf.json.JSONArray;
 import cn.baisee.entity.AuthorResources;
 import cn.baisee.entity.vo.PageVo;
 
@@ -33,4 +34,11 @@ public interface IAuthorResourcesService {
 	 * @param did
 	 */
 	public void delete(Serializable did);
+	
+	/**
+	 * 查询所有资源
+	 * @return
+	 */
+	public String queryAll();
+	
 }

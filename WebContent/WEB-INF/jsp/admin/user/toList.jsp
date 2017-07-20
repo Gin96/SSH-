@@ -64,6 +64,7 @@
 					<th>登录状态</th>
 					<th>家庭地址信息</th>
 					<th>注册时间</th>
+					<th>操作</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -77,6 +78,11 @@
 						<td>${item.status }</td>
 						<td>${item.detail }</td>
 						<td>${item.registerDate }</td>
+						<td>
+							<c:if test="${item.userType eq '100003'}">
+								<a href="${pageContext.request.contextPath}/user/toAuthor.htmlx?user.userId=${item.userId}">授权角色</a>
+							</c:if>
+						</td>
 					</tr>
 				</c:forEach>
 			</tbody>

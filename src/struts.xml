@@ -7,4 +7,43 @@
      <constant name="struts.objectFactory" value="spring"></constant>
       <!--该属性指定需要Struts 2处理的请求后缀，该属性的默认值是action，即所有匹配*.action的请求都由Struts2处理。 如果用户需要指定多个请求后缀，则多个后缀之间以英文逗号（,）隔开-->
 	 <constant name="struts.action.extension" value="do,action,htmlx" />
-  </struts>
+	 <!-- 
+	 	自定义的包
+	 	1.全局结果集，404,500或者其他错误处理
+	 	2.如果系统当中有异常了需要保存记录，并且处理错误
+	 	3.权限控制
+	 	 使用方法:
+	 	 	在要使用的界面@ParentPackage("myPackage") 
+	 	 	@InterceptorRef("authorStack")，这个是使用全部
+	 	 	
+	 	 	那么有些方法需要，有些可能不需要，
+	 	 	则新建一个package，extends="myPackage",例如authorPackage 
+	 -->
+	 <package name="myPackage" namespace="/" extends="struts-default">
+	 	<!-- 拦截器异常处理拦截 -->
+ 		<interceptors>
+ 			<interceptor name="exceptionInter" class="cn.baisee.interceptor.ExceptionInter"></interceptor>
+ 			<interceptor name="authorInter" class="cn.baisee.interceptor.AuthorInter"></interceptor>
+ 			<interceptor-stack name="authorStack">
+ 				<interceptor-ref name="authorInter"></interceptor-ref>
+ 				<interceptor-ref name="exceptionInter"></interceptor-ref>
+ 				<interceptor-ref name="basicStack"></interceptor-ref>
+ 			</interceptor-stack>
+ 		</interceptors>
+	 	<!-- 定义全局结果集 -->
+	 	<global-results>
+	 		<result name="login">/login.jsp</result>
+	 		<result name="errorPage404"></result>
+	 		<result name="errorPage500"></result>
+	 	</global-results>
+ 		<!-- 异常错误处理机制 -->
+<!--  		<global-exception-mappings> -->
+<!--  			<exception-mapping result="errorPage500" exception="java.lang.Throwable"></exception-mapping> -->
+<!--  		</global-exception-mappings> -->
+ 		
+	 </package>
+	 <package name="authorPackage" namespace="/" extends="myPackage">
+	 	<!-- 默认使用拦截堆 -->
+	 	<default-interceptor-ref name="authorStack"></default-interceptor-ref>
+	 </package>
+  </struts> 

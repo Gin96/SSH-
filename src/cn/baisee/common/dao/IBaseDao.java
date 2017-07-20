@@ -17,6 +17,8 @@ public interface IBaseDao<T> {
 	 */
 	public void update(Object entity);
 	
+	public Integer updateSQL(String sql,Serializable...args);
+	
 	/**
 	 * 保存或者更新
 	 * @param entity

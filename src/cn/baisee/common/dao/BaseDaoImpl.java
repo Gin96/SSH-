@@ -189,4 +189,19 @@ public abstract class BaseDaoImpl<T> implements IBaseDao<T> {
 		int row=query.executeUpdate();
 		return row;
 	}
+	
+	public Integer updateSQL(String sql,Serializable...args){
+		//获取当前线程Session
+		Session session=template.getSessionFactory().getCurrentSession();
+		//创建查询
+		Query query=session.createSQLQuery(sql);
+		//设置查询参数
+		if(args!=null){
+			for (int i = 0; i < args.length; i++) {
+				query.setParameter(i, args[i]);
+			}
+		}
+		int row=query.executeUpdate();
+		return row;
+	}
 }

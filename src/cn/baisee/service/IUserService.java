@@ -23,4 +23,7 @@ public interface IUserService {
 	 */
 	public PageVo toList(PageVo vo);
 	
+	public void saveUserRole(String userId, String roleIds);
+	
+	public String queryUserAuthorTree(String userId);
 }

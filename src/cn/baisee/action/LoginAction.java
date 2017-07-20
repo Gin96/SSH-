@@ -1,7 +1,12 @@
 package cn.baisee.action;
 
-import javax.annotation.Resource;
+import java.io.IOException;
+import java.io.PrintWriter;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -41,7 +46,24 @@ public class LoginAction implements ModelDriven<User>{
 		}
 		return "success";
 	}
-
+	
+	@Action("queryUserAuthorTree")
+	public void queryUserAuthorTree(){
+		String results=userSerivce.queryUserAuthorTree("1");
+		//保存权限
+		ServletActionContext.getRequest().getSession().setAttribute("authorTree",results);
+		try {
+			//输出对象
+			HttpServletResponse response=ServletActionContext.getResponse();
+			//设置输出格式
+			response.setContentType("text/html;charset=utf-8");
+			PrintWriter write=response.getWriter();
+			write.write(results);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
 	
 	@Override
 	public User getModel() {

@@ -1,9 +1,13 @@
 package cn.baisee.action;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Date;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -22,9 +26,8 @@ import com.opensymphony.xwork2.ModelDriven;
 	@Result(name="toAdd",location="/WEB-INF/jsp/admin/author/res/add.jsp"),
 	@Result(name="steptoAdd",type="redirectAction",params={"namespace","/res","actionName","toAdd","res.id","%{res.id}"}),
 	@Result(name="steptoList",type="redirectAction",params={"namespace","/res","actionName","toList"})
-	
 })
-@ParentPackage("struts-default")
+@ParentPackage("authorPackage")
 @Namespace("/res")
 @Controller
 public class AuthorResourcesAction implements ModelDriven<PageVo>{
@@ -34,6 +37,15 @@ public class AuthorResourcesAction implements ModelDriven<PageVo>{
 	private AuthorResources res;
 	private PageVo pageVo;
 
+	@Action("testExc")
+	public String testExc() throws Exception{ 
+		if(1==1){
+			throw new RuntimeException("sjka");
+		}
+		return "login";
+	}
+	
+	
 	/**
 	 * 分页显示
 	 * @return
@@ -81,6 +93,30 @@ public class AuthorResourcesAction implements ModelDriven<PageVo>{
 	public String delete(){
 		resService.delete(res.getId());
 		return "steptoList";
+	}
+	
+	/**
+	 * 查询出所有资源显示在角色授权管理页面
+	 * @return
+	 */
+	@Action("all")
+	public void all(){
+		//查询出的资源树
+		String results=resService.queryAll();
+		try {
+			//数处对象
+			HttpServletResponse response=ServletActionContext.getResponse();
+			//设置输出格式
+			response.setContentType("text/html;charset=utf-8");
+			//PrintWriter是一种过滤流，也叫处理流，能对字节流（OutputStream）
+			//和字符流(Writer)进行处理
+			PrintWriter writer=response.getWriter();
+			writer.write(results);
+			writer.flush();
+			System.out.println(results);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	

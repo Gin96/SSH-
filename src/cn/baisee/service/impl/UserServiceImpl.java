@@ -1,14 +1,20 @@
 package cn.baisee.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
 import org.springframework.stereotype.Service;
 
 import cn.baisee.dao.IUserDao;
+import cn.baisee.entity.AuthorResources;
 import cn.baisee.entity.User;
 import cn.baisee.entity.vo.PageVo;
 import cn.baisee.service.IUserService;
@@ -27,6 +33,70 @@ public class UserServiceImpl implements IUserService{
 	public User login(String uname, String upass) {
 		return (User) userDao.queryHqlUnique("from User where uname=? and upass=?", uname,upass);
 	}
+	
+	/**
+	 * 查询权限树
+	 */
+	@Override
+	public String queryUserAuthorTree(String userId) {
+		//查询得到结果集
+		List<AuthorResources> results=userDao.queryUserAuthorTree(userId);
+		//分析一下资源树的父子关系,key是资源的父节点
+		Map<Integer,List<AuthorResources>> resultMap=new HashMap<Integer, List<AuthorResources>>();
+		//循环分析
+		for(AuthorResources item:results){
+			//获取当前节点的父结果集是否为空
+			List<AuthorResources> parents=resultMap.get(item.getParentId());
+			if(parents ==null){
+				parents=new ArrayList<AuthorResources>();
+				parents.add(item);
+			}else{
+				parents.add(item);
+			}
+			//将当前结果集回填
+			resultMap.put(item.getParentId(),parents);
+		}
+		//JSONArray
+		JSONArray array=new JSONArray();
+		//构建树
+		buildTree(null, array, resultMap);
+		return array.toString();
+	}
+
+	/**
+	 * 构建树
+	 * @param 	parentId 当前节点的父节点ID
+	 * @param	array  构建JsonArray的对象，上一级的，用于存放进array
+	 */
+	public void buildTree(Integer parentId, JSONArray array,Map<Integer,List<AuthorResources>> resultMap) {
+		//声明子节点
+		List<AuthorResources> childs=null;
+		//查询是否为根节点
+		if(parentId==null){//根节点
+			childs=resultMap.get(null);
+		}else{
+			childs=resultMap.get(parentId);
+		}
+		for(AuthorResources child:childs){
+			//当前节点为child
+			//查询当前节点是否还有子节点
+			List<AuthorResources> cchilds=resultMap.get(child.getId());
+			if(cchilds!=null && cchilds.size()>0){
+				JSONArray childArray=new JSONArray();
+				buildTree(child.getId(), childArray,resultMap);
+				
+				JSONObject childObject=JSONObject.fromObject(child);
+				//相当于map.put存值，(key,value),把名为children的子节点childArray数组
+				//存放在上一级父节点childObject对象
+				childObject.element("children", childArray);
+				array.add(childObject);
+			}else{
+				//没有子节点
+				array.add(JSONObject.fromObject(child));
+			}
+		}
+	}
+	
 
 	/**
 	 * 用户管理分页
@@ -69,5 +139,12 @@ public class UserServiceImpl implements IUserService{
 		return vo;
 	}
 
-	
+	@Override
+	public void saveUserRole(String userId, String roleIds) {
+		if(userId != null && roleIds !=null){
+			userDao.saveUserRole(userId, roleIds);
+		}
+	}
+
+
 }

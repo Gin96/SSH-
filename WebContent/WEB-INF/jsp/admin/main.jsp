@@ -8,6 +8,17 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/statics/js/jquery.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/statics/js/EasyUI/jquery.easyui.min.js"></script>
 		<script type="text/javascript">
+			$(function(){
+				$("#tree").tree({
+					url:"${pageContext.request.contextPath}/queryUserAuthorTree.htmlx",
+					onClick:function(node){
+						changgeRightContent("${pageContext.request.contextPath}"+node.path);
+					},
+					formatter:function(node){
+						return node.name;
+					}
+				})
+			});
 			function changgeRightContent(url){
 				$("#rightContent").attr("src",url);
 			}
@@ -21,7 +32,7 @@
 	</div>
 	<div data-options="region:'west',split:true,title:'功能菜单项'" style="width: 250px;">
 		<!--功能菜单项	 -->
-		<ul class="easyui-tree">
+		<%-- <ul class="easyui-tree">
 				<li>
 					<span>用户管理</span>
 					<ul>
@@ -42,10 +53,14 @@
 							
 						</li>
 						<li>
-							<span>角色管理</span>
+							<span>
+								<a onclick="changgeRightContent('${pageContext.request.contextPath}/role/toList.htmlx')">角色管理</a>
+							</span>
 						</li>
 						<li>
-							<span>用户角色管理</span>
+							<span>
+								<a onclick="changgeRightContent('${pageContext.request.contextPath}/role/toList.htmlx')">用户角色管理</a>
+							</span>
 						</li>
 					</ul>
 				</li>
@@ -87,7 +102,10 @@
 						</li>
 					</ul>
 				</li>
-			</ul>
+			</ul> --%>
+		<ul id="tree">
+		
+		</ul>
 	</div>
 	<div data-options="region:'center',title:'业务功能区'">
 		<iframe id="rightContent" width="100%" height="100%" src="${pageContext.request.contextPath}/forward.htmlx?path=work.defaultWork" frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling="no"   />

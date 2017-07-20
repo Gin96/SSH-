@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50527
 File Encoding         : 65001
 
-Date: 2017-07-07 20:59:56
+Date: 2017-07-20 11:17:34
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -34,11 +34,11 @@ CREATE TABLE `author_resources` (
 -- Records of author_resources
 -- ----------------------------
 INSERT INTO `author_resources` VALUES ('1', '权限管理', '', null, '1', '2017-07-07 17:18:24', '根节点权限管理');
-INSERT INTO `author_resources` VALUES ('2', '资源管理', '/author/role/toList.htmlx', '1', '2', '2017-07-07 17:20:23', '权限管理的子节点---资源管理');
-INSERT INTO `author_resources` VALUES ('3', '角色管理', '/author/resouces/toList.htmlx', '1', '3', '2017-07-07 17:19:57', '权限管理的子节点---角色管理');
+INSERT INTO `author_resources` VALUES ('2', '资源管理', '/res/toList.htmlx', '1', '2', '2017-07-17 21:22:45', '权限管理的子节点---资源管理');
+INSERT INTO `author_resources` VALUES ('3', '角色管理', '/role/toList.htmlx', '1', '3', '2017-07-17 21:22:55', '权限管理的子节点---角色管理');
 INSERT INTO `author_resources` VALUES ('4', '手动添加资源一', '/add/new1.htmlx', null, '1', '2017-07-07 20:24:33', '测试');
 INSERT INTO `author_resources` VALUES ('5', '手动添加er', '/add/new2.htmlx', null, '2', '2017-07-07 20:30:40', '测试添加资源');
-INSERT INTO `author_resources` VALUES ('6', '用户角色', '/user_role/toList.htmlx', '1', '5', '2017-07-07 20:40:06', '添加用户角色在权限管理中');
+INSERT INTO `author_resources` VALUES ('6', '用户管理', '/user/toList.htmlx', '1', '5', '2017-07-17 21:22:16', '添加用户角色在权限管理中');
 
 -- ----------------------------
 -- Table structure for `author_role`
@@ -75,8 +75,10 @@ CREATE TABLE `author_role_resouces` (
 INSERT INTO `author_role_resouces` VALUES ('1', '1');
 INSERT INTO `author_role_resouces` VALUES ('1', '2');
 INSERT INTO `author_role_resouces` VALUES ('2', '1');
+INSERT INTO `author_role_resouces` VALUES ('2', '2');
 INSERT INTO `author_role_resouces` VALUES ('3', '1');
 INSERT INTO `author_role_resouces` VALUES ('3', '2');
+INSERT INTO `author_role_resouces` VALUES ('6', '2');
 
 -- ----------------------------
 -- Table structure for `author_user_role`
@@ -136,5 +138,5 @@ CREATE TABLE `user` (
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES ('1', 'zhangsan', 'zhangsan', '100001', '1@qq.com', '100001', '2017-07-06 17:48:37', '15830409054', '100001', '100002', '300001', '河北邯郸市');
+INSERT INTO `user` VALUES ('1', 'zhangsan', 'zhangsan', '100003', '1@qq.com', '100001', '2017-07-17 14:50:08', '15830409054', '100001', '100002', '300001', '河北邯郸市');
 INSERT INTO `user` VALUES ('2', 'aaa', 'aaa', '100001', null, null, '2017-07-07 10:06:39', null, null, null, null, null);
